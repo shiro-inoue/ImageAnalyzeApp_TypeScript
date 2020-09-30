@@ -1,12 +1,12 @@
 function clearSelectRect() {
-    let cvs = document.getElementById('baseImgOverlayer');
-    let ctx = cvs.getContext('2d');
+    let cvs: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('baseImgOverlayer');
+    let ctx: CanvasRenderingContext2D = cvs.getContext('2d')!;
     ctx.clearRect(0, 0, cvs.clientWidth, cvs.clientHeight);
 }
 
 function clearPixelColor() {
-    document.getElementById("imageLocation").innerHTML = "";
-    document.getElementById("pixelColor").innerHTML = "";
+    document.getElementById("imageLocation")!.innerHTML = "";
+    document.getElementById("pixelColor")!.innerHTML = "";
 }
 
 function clearSelectRange() {
@@ -16,13 +16,13 @@ function clearSelectRange() {
 
 function readImg() {
 
-    const reader = new FileReader();
-    const fileSelect = document.getElementById("fileSelect");
-    const cvs = document.getElementById("baseImg");
-    let ctx = cvs.getContext("2d");
-    let img = new Image();
+    const reader: FileReader = new FileReader();
+    const fileSelect: HTMLInputElement = <HTMLInputElement>document.getElementById("fileSelect");
+    const cvs: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("baseImg");
+    let ctx: CanvasRenderingContext2D = cvs.getContext("2d")!;
+    let img: HTMLImageElement = new Image();
 
-    if (fileSelect.files.length == 0) {
+    if (fileSelect.files!.length == 0) {
         return;
     }
     reader.onloadend = () => {
@@ -31,31 +31,34 @@ function readImg() {
             imageData = ctx.getImageData(0, 0, IMAGE_WIDHT, IMAGE_HEIGHT);
 
         }
-        img.src = reader.result;
+        img.src = <string>reader.result;
     }
-    reader.readAsDataURL(fileSelect.files[0]);
+    reader.readAsDataURL(fileSelect.files![0]);
 
-    document.getElementById("colorFormat").disabled = "";
-    document.getElementById("binNumberId").disabled = "";
-    document.getElementById("colorPix").disabled = "";
-    document.getElementById("analysisImg").disabled = "";
-    document.getElementById("selectRect").disabled = "";
+    (<HTMLSelectElement>document.getElementById("colorFormat")).disabled = false;
+    (<HTMLSelectElement>document.getElementById("binNumberId")).disabled = false;
+    (<HTMLInputElement>document.getElementById("colorPix")).disabled = false;
+    (<HTMLInputElement>document.getElementById("analysisImg")).disabled = false;
+    (<HTMLInputElement>document.getElementById("selectRect")).disabled = false;
 }
 
-function clickBaseImg(event) {
+function clickBaseImg(event: { offsetX: number; offsetY: number; }) {
     if (isOperationTypeColorPix()) {
-        const cvs = document.getElementById("baseImg");
-        let ctx = cvs.getContext("2d");
-        let pixelData = ctx.getImageData(event.offsetX, event.offsetY, 1, 1);
-        let colorFormat = document.getElementById("colorFormat").value;
-        let colorFormat1 = colorFormat.substr(0, 1);
-        let colorFormat2 = colorFormat.substr(1, 1);
-        let colorFormat3 = colorFormat.substr(2, 1);
-        let formatedData = [0, 0, 0];
+        const cvs: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("baseImg");
+        let ctx: CanvasRenderingContext2D = cvs.getContext("2d")!;
+        let pixelData: ImageData = ctx.getImageData(event.offsetX, event.offsetY, 1, 1);
+        let colorFormat: string = (<HTMLSelectElement>document.getElementById("colorFormat")).value;
+        let colorFormat1: string = colorFormat.substr(0, 1);
+        let colorFormat2: string = colorFormat.substr(1, 1);
+        let colorFormat3: string = colorFormat.substr(2, 1);
+        let formatedData: number[] = [0, 0, 0];
 
         switch (colorFormat) {
             case "RGB":
-                formatedData = pixelData.data;
+                // formatedData = pixelData.data;
+                formatedData[0] = pixelData.data[0];
+                formatedData[1] = pixelData.data[1];
+                formatedData[2] = pixelData.data[2];
                 break;
             case "HSV":
                 RGB2HSV(formatedData, pixelData.data[0], pixelData.data[1], pixelData.data[2]);
@@ -65,9 +68,9 @@ function clickBaseImg(event) {
                 break;
             default:
         }
-        document.getElementById("imageLocation").innerHTML = "X:" + event.offsetX + ","
+        document.getElementById("imageLocation")!.innerHTML = "X:" + event.offsetX + ","
             + "Y:" + event.offsetY;
-        document.getElementById("pixelColor").innerHTML = colorFormat1 + ":" + formatedData[0] + ", "
+        document.getElementById("pixelColor")!.innerHTML = colorFormat1 + ":" + formatedData[0] + ", "
             + colorFormat2 + ":" + formatedData[1] + ", "
             + colorFormat3 + ":" + formatedData[2];
     } else {
@@ -82,10 +85,10 @@ function clickBaseImg(event) {
     }
 }
 
-function drawRectOnBaseImg(event) {
+function drawRectOnBaseImg(event: { offsetX: number; offsetY: number; }) {
     if (selectRangeState == SELECT_RANGE_STATE.SELECTING) {
-        let cvs = document.getElementById('baseImgOverlayer');
-        let ctx = cvs.getContext('2d');
+        let cvs: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('baseImgOverlayer');
+        let ctx: CanvasRenderingContext2D = cvs.getContext('2d')!;
 
         ctx.clearRect(0, 0, cvs.clientWidth, cvs.clientHeight);
         secondPosX = event.offsetX;
@@ -101,36 +104,36 @@ function drawRectOnBaseImg(event) {
 }
 
 function drawHistgram() {
-    let cvs = document.getElementById("histgramImgId");
-    let binNumber = document.getElementById("binNumberId").value;
-    let colorFormatSelectedIdx = document.getElementById("colorFormat").selectedIndex;
+    let cvs = document.getElementById("histgramImgId")!;
+    let binNumber: string = (<HTMLSelectElement>document.getElementById("binNumberId")).value;
+    let colorFormatSelectedIdx: number = (<HTMLSelectElement>document.getElementById("colorFormat")).selectedIndex;
 
-    for (histgramIndex = 0; histgramIndex < cvs.children.length; histgramIndex++) {
-        let ctx = cvs.children[histgramIndex].getContext('2d');
+    for (let histgramIndex = 0; histgramIndex < cvs.children.length; histgramIndex++) {
+        let ctx: CanvasRenderingContext2D = (<HTMLCanvasElement>cvs.children[histgramIndex]).getContext('2d')!;
 
         ctx.clearRect(0, 0, cvs.children[histgramIndex].clientWidth,
             cvs.children[histgramIndex].clientHeight);
 
-        if (document.getElementById("binNumberId").value == COLOR_RANGE) {
+        if ((<HTMLSelectElement>document.getElementById("binNumberId")).value == COLOR_RANGE.toString()) {
             clearSelectRange();
             continue;
         }
 
         ctx.fillStyle = HISTGRAM_COLOR[colorFormatSelectedIdx * 3 + histgramIndex];
 
-        let binArr = new Array();
+        let binArr: number[] = new Array(3);
         makeBinCount(binArr, histgramIndex, binNumber);
 
-        drawCompHistgram(ctx, binArr, binNumber);
+        drawCompHistgram(ctx, binArr, parseInt(binNumber));
 
     }
 }
 
-function drawCompHistgram(ctx, binArr, binNumber) {
-    let binHeight;
-    let binWidth = IMAGE_WIDHT / binNumber;
-    let pixelTotalRect;
-    let operationType = document.getElementById("operationTypeId").operationType.value;
+function drawCompHistgram(ctx: CanvasRenderingContext2D, binArr: number[], binNumber: number) {
+    let binHeight: number;
+    let binWidth: number = IMAGE_WIDHT / binNumber;
+    let pixelTotalRect: number;
+    let operationType = (<HTMLFormElement>document.getElementById("operationTypeId")).operationType.value;
 
     if (operationType == "selectRect") {
         if (selectRangeState == SELECT_RANGE_STATE.SELECTED) {
@@ -145,7 +148,7 @@ function drawCompHistgram(ctx, binArr, binNumber) {
         pixelTotalRect = PIXEL_TOTAL;
     }
 
-    for (i = 0; i <= binNumber; i++) {
+    for (let i = 0; i <= binNumber; i++) {
         binHeight = Math.floor((binArr[i] / pixelTotalRect) * IMAGE_HEIGHT);
         ctx.fillRect(
             i * binWidth,
@@ -154,4 +157,3 @@ function drawCompHistgram(ctx, binArr, binNumber) {
             binHeight);
     }
 }
-
