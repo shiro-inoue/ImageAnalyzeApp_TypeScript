@@ -4,6 +4,10 @@ function clearSelectRect() {
     var ctx = cvs.getContext('2d');
     ctx.clearRect(0, 0, cvs.clientWidth, cvs.clientHeight);
 }
+function clickSelectRange() {
+    clearPixelColor();
+    adjustmentGradationCombobox();
+}
 function clearPixelColor() {
     document.getElementById("imageLocation").innerHTML = "";
     document.getElementById("pixelColor").innerHTML = "";
@@ -126,5 +130,19 @@ function drawCompHistgram(ctx, binArr, binNumber) {
     for (var i = 0; i <= binNumber; i++) {
         binHeight = Math.floor((binArr[i] / pixelTotalRect) * IMAGE_HEIGHT);
         ctx.fillRect(i * binWidth, (IMAGE_HEIGHT - binHeight), binWidth, binHeight);
+    }
+}
+function selectBinNumber() {
+    adjustmentGradationCombobox();
+}
+function adjustmentGradationCombobox() {
+    var element = document.getElementById("operationTypeId");
+    var radioNodeList = element.operationType;
+    var value = radioNodeList.value;
+    if (value === "colorPix") {
+        return;
+    }
+    if (document.getElementById("formComboboxes").binNumberId.selectedIndex === 0) {
+        document.getElementById("formComboboxes").binNumberId.selectedIndex = 1;
     }
 }

@@ -4,6 +4,11 @@ function clearSelectRect() {
     ctx.clearRect(0, 0, cvs.clientWidth, cvs.clientHeight);
 }
 
+function clickSelectRange() {
+    clearPixelColor();
+    adjustmentGradationCombobox();
+}
+
 function clearPixelColor() {
     document.getElementById("imageLocation")!.innerHTML = "";
     document.getElementById("pixelColor")!.innerHTML = "";
@@ -155,5 +160,23 @@ function drawCompHistgram(ctx: CanvasRenderingContext2D, binArr: number[], binNu
             (IMAGE_HEIGHT - binHeight),
             binWidth,
             binHeight);
+    }
+}
+
+function selectBinNumber() {
+    adjustmentGradationCombobox();
+}
+
+function adjustmentGradationCombobox() {
+    var element = <HTMLFormElement>document.getElementById("operationTypeId");
+    var radioNodeList = element.operationType;
+    var value = radioNodeList.value;
+
+    if (value === "colorPix") {
+        return;
+    }
+
+    if ((<HTMLFormElement>document.getElementById("formComboboxes")).binNumberId.selectedIndex === 0) {
+        (<HTMLFormElement>document.getElementById("formComboboxes")).binNumberId.selectedIndex = 1;
     }
 }
