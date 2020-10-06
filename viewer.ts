@@ -168,9 +168,9 @@ function selectBinNumber() {
 }
 
 function adjustmentGradationCombobox() {
-    var element = <HTMLFormElement>document.getElementById("operationTypeId");
-    var radioNodeList = element.operationType;
-    var value = radioNodeList.value;
+    let element = <HTMLFormElement>document.getElementById("operationTypeId");
+    let radioNodeList = element.operationType;
+    let value = radioNodeList.value;
 
     if (value === "colorPix") {
         return;
